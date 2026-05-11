@@ -563,7 +563,7 @@ window.addEventListener('load', () => {
   const r = new URLSearchParams(location.search).get('r');
   if (r) {
     try {
-      const data = JSON.parse(decodeURIComponent(escape(atob(r))));
+      const data = JSON.parse(b64uDecode(r));
       if (data.v === 1 && data.cols && data.rows) {
         showSharedResult(data);
         return;
@@ -1228,7 +1228,7 @@ function calculate() {
 function shareResultLink() {
   if (!lastResultData) { alert('먼저 정산 계산하기를 눌러주세요.'); return; }
 
-  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(lastResultData))));
+  const encoded = b64uEncode(JSON.stringify(lastResultData));
   const url = location.origin + location.pathname + '?r=' + encoded;
 
   const accountLine = [lastResultData.bank, lastResultData.account, lastResultData.holder]
@@ -1295,6 +1295,17 @@ function resetToForm() {
   const savedKey = localStorage.getItem('tmapKey');
   document.getElementById('tmapKey').value = savedKey || DEFAULT_TMAP_KEY;
   renderMembers();
+}
+
+// ─── URL-safe base64 (카카오톡 = 문자 파싱 문제 방지) ──
+function b64uEncode(str) {
+  return btoa(unescape(encodeURIComponent(str)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64uDecode(str) {
+  const s = str.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = s.length % 4 === 0 ? 0 : 4 - (s.length % 4);
+  return decodeURIComponent(escape(atob(s + '='.repeat(pad))));
 }
 
 // ─── 유틸 ──────────────────────────────────────────────
