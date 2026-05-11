@@ -448,14 +448,6 @@
       </table>
     </div>
 
-    <hr class="divider">
-
-    <h3 style="font-size:14px; color:#555; margin-bottom:10px;">💸 송금 목록</h3>
-    <ul class="transfer-list" id="transferList"></ul>
-    <div id="noTransfer" style="display:none; text-align:center; color:#888; font-size:14px; padding:16px;">
-      ✅ 모두 정산 완료! 추가 송금이 필요 없어요.
-    </div>
-
     <div id="accountResult" style="display:none;">
       <hr class="divider">
       <div style="background:#e8f5e9;border-radius:8px;padding:12px 16px;font-size:14px;">
@@ -1170,25 +1162,6 @@ function calculate() {
   totalRow += `<td><strong>${comma(members.reduce((s,m) => s + roundUp10(share[m]||0), 0))}원</strong></td><td></td>`;
   tbody.innerHTML += `<tr class="total-row">${totalRow}</tr>`;
 
-  // ── 송금 목록
-  const bunjoo     = document.getElementById('bunjooSelect')?.value;
-  const transfers  = bunjoo ? settleViaBunjoo(balance, bunjoo) : settleMinTransfers(balance);
-  const tList      = document.getElementById('transferList');
-  const noTransfer = document.getElementById('noTransfer');
-  if (transfers.length === 0) {
-    tList.innerHTML = ''; noTransfer.style.display = 'block';
-  } else {
-    noTransfer.style.display = 'none';
-    const header = bunjoo
-      ? `<div style="font-size:12px;color:#888;margin-bottom:10px;">👑 <strong>${bunjoo}</strong>(벙주)에게 먼저 입금 → 벙주가 각자에게 재입금</div>`
-      : '';
-    tList.innerHTML = header + transfers.map(t => `
-      <li class="transfer-item">
-        <span><strong>${t.from}</strong><span class="transfer-arrow">→</span><strong>${t.to}</strong></span>
-        <span class="amount">${comma(t.amount)}원</span>
-      </li>`).join('');
-  }
-
   // ── 계좌 안내
   const bank    = document.getElementById('bankName').value.trim();
   const account = document.getElementById('bankAccount').value.trim();
@@ -1218,30 +1191,48 @@ async function shareResult() {
   btn.disabled = true;
   btn.textContent = '⏳ 이미지 생성 중...';
 
-  try {
-    // 공유 버튼 임시 숨김 (이미지에서 제외)
-    btn.style.visibility = 'hidden';
-    const hintEl = resultCard.querySelector('.share-hint');
-    if (hintEl) hintEl.style.visibility = 'hidden';
+  // 캡처용 클론: 스크롤 위치 무관하게 전체 높이를 오프스크린에서 렌더링
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText =
+    'position:fixed;left:-9999px;top:0;' +
+    `width:${resultCard.offsetWidth}px;` +
+    'background:#ffffff;font-family:\'Malgun Gothic\',sans-serif;';
 
-    const canvas = await html2canvas(resultCard, {
+  const clone = resultCard.cloneNode(true);
+  clone.style.cssText = 'display:block;margin:0;box-shadow:none;border-radius:12px;';
+  // 공유 버튼·힌트는 이미지에서 제외
+  clone.querySelector('#shareBtn')?.remove();
+  clone.querySelector('.share-hint')?.remove();
+
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
+  try {
+    await new Promise(r => setTimeout(r, 80)); // 렌더 대기
+
+    const canvas = await html2canvas(wrapper, {
       backgroundColor: '#ffffff',
       scale: 2,
       useCORS: true,
-      logging: false,
-      scrollX: 0,
-      scrollY: -window.scrollY
+      logging: false
     });
 
-    btn.style.visibility = 'visible';
-    if (hintEl) hintEl.style.visibility = 'visible';
+    document.body.removeChild(wrapper);
 
     canvas.toBlob(async (blob) => {
       const file = new File([blob], '파샨파샨_정산결과.png', { type: 'image/png' });
 
+      const bank    = document.getElementById('bankName').value.trim();
+      const account = document.getElementById('bankAccount').value.trim();
+      const holder  = document.getElementById('bankHolder').value.trim();
+      const accountLine = (bank || account || holder)
+        ? `\n\n💳 입금 계좌\n${[bank, account, holder].filter(Boolean).join(' ')}`
+        : '';
+      const shareText = `파샨파샨 정산결과를 확인하세요!${accountLine}`;
+
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-          await navigator.share({ files: [file], title: '파샨파샨 정산결과', text: '정산결과를 확인하세요!' });
+          await navigator.share({ files: [file], title: '파샨파샨 정산결과', text: shareText });
         } catch (err) {
           if (err.name !== 'AbortError') downloadCanvas(canvas);
         }
@@ -1251,7 +1242,7 @@ async function shareResult() {
     }, 'image/png');
 
   } catch (e) {
-    btn.style.visibility = 'visible';
+    document.body.contains(wrapper) && document.body.removeChild(wrapper);
     alert('이미지 생성 실패: ' + e.message);
   } finally {
     btn.disabled = false;
@@ -1268,38 +1259,6 @@ function downloadCanvas(canvas) {
 
 // ─── 유틸 ──────────────────────────────────────────────
 function roundUp10(n) { return Math.ceil(n / 10) * 10; }
-
-function settleViaBunjoo(balance, bunjoo) {
-  const transfers = [];
-  Object.entries(balance).forEach(([name, b]) => {
-    if (name === bunjoo) return;
-    const amount = roundUp10(Math.abs(b));
-    if (amount < 10) return;
-    if (b < 0) transfers.push({ from: name, to: bunjoo, amount });
-    else transfers.push({ from: bunjoo, to: name, amount });
-  });
-  return transfers;
-}
-
-function settleMinTransfers(balance) {
-  const pos = [], neg = [];
-  Object.entries(balance).forEach(([name, b]) => {
-    if (b > 0) pos.push({ name, b });
-    else if (b < 0) neg.push({ name, b: -b });
-  });
-  pos.sort((a, b) => b.b - a.b);
-  neg.sort((a, b) => b.b - a.b);
-  const result = [];
-  let i = 0, j = 0;
-  while (i < pos.length && j < neg.length) {
-    const amount = Math.min(pos[i].b, neg[j].b);
-    result.push({ from: neg[j].name, to: pos[i].name, amount: roundUp10(amount) });
-    pos[i].b -= amount; neg[j].b -= amount;
-    if (pos[i].b < 1) i++;
-    if (neg[j].b < 1) j++;
-  }
-  return result;
-}
 
 function comma(n) { return Math.abs(n).toLocaleString('ko-KR'); }
 </script>
