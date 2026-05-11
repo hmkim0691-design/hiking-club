@@ -60,6 +60,8 @@
   .btn-red:hover { background: #e55252; }
   .btn-blue { background: #4a90d9; color: white; }
   .btn-blue:hover { background: #357abf; }
+  .btn-orange { background: #e8623a; color: white; }
+  .btn-orange:hover { background: #c94e2b; }
   .btn-main {
     width: 100%; padding: 14px; font-size: 16px;
     background: linear-gradient(135deg, #2d6a4f, #52b788);
@@ -68,6 +70,16 @@
     margin-top: 8px; transition: opacity 0.2s;
   }
   .btn-main:hover { opacity: 0.92; }
+  .btn-share {
+    width: 100%; padding: 13px; font-size: 15px;
+    background: linear-gradient(135deg, #f9a825, #f57f17);
+    color: white; border-radius: 10px; border: none;
+    cursor: pointer; font-family: inherit; font-weight: 700;
+    margin-top: 12px; transition: opacity 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-share:hover { opacity: 0.9; }
+  .btn-share:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .tag {
@@ -117,10 +129,7 @@
     border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.13);
     z-index: 200; display: none; max-height: 220px; overflow-y: auto;
   }
-  .poi-item {
-    padding: 9px 12px; cursor: pointer;
-    border-bottom: 1px solid #f3f3f3;
-  }
+  .poi-item { padding: 9px 12px; cursor: pointer; border-bottom: 1px solid #f3f3f3; }
   .poi-item:last-child { border-bottom: none; }
   .poi-item:hover { background: #f0f9f4; }
   .poi-name { font-size: 13px; font-weight: 700; color: #222; }
@@ -135,14 +144,6 @@
   .chip:hover { background: #e8f5e9; border-color: #52b788; color: #2d6a4f; }
   .chip.active { background: #52b788; color: white; border-color: #52b788; }
 
-  .nodrinker-section {
-    margin-top: 8px; padding: 10px 12px;
-    background: #fff5f5; border: 1px solid #ffd0d0; border-radius: 8px;
-  }
-  .nodrinker-section label.section-label {
-    font-size: 12px; font-weight: 700; color: #c0392b; margin-bottom: 6px; display: block;
-  }
-  .nodrinker-section .checkbox-label { font-size: 13px; }
   .disabled-member { opacity: 0.4; text-decoration: line-through; }
 
   .route-result {
@@ -178,13 +179,11 @@
     border-radius: 8px; padding: 10px 14px; font-size: 12px;
     color: #874d00; line-height: 1.7; margin-top: 10px;
   }
-  .api-notice a { color: #d46b08; font-weight: 700; }
   .api-saved { font-size: 12px; color: #52b788; display: none; margin-top: 6px; }
 
   .btn-lock {
     background: none; border: none; cursor: pointer;
-    font-size: 13px; padding: 0 4px; vertical-align: middle;
-    line-height: 1;
+    font-size: 13px; padding: 0 4px; vertical-align: middle; line-height: 1;
   }
   .btn-lock:hover { opacity: 0.7; }
 
@@ -197,6 +196,25 @@
   }
   .btn-opinet:hover { background: #c94e2b; }
 
+  /* 늦게 온 인원 */
+  .late-section {
+    margin-top: 12px; padding: 10px 12px;
+    background: #fff8f0; border: 1px solid #ffe0b2; border-radius: 8px;
+  }
+  .late-section-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+  }
+  .late-section-header span { font-size: 12px; font-weight: 700; color: #e65100; }
+  .late-entry {
+    background: white; border: 1px solid #ffe0b2;
+    border-radius: 6px; padding: 8px 10px; margin-bottom: 6px;
+  }
+  .late-row { display: flex; gap: 6px; align-items: center; }
+  .late-row select, .late-row input[type=number] {
+    flex: 1; padding: 7px 8px; font-size: 13px;
+  }
+
+  /* 결과 카드 */
   .result-card {
     background: white; border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -204,13 +222,21 @@
   }
   .result-card h2 { font-size: 16px; font-weight: 700; color: #2d6a4f; margin-bottom: 14px; }
 
-  .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px; }
+  .summary-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 16px; }
+  .summary-table { width: 100%; border-collapse: collapse; font-size: 13px; white-space: nowrap; }
   .summary-table th {
     background: #e8f5e9; padding: 8px 10px;
-    text-align: left; font-size: 13px; color: #555;
+    text-align: center; font-size: 12px; color: #555; border: 1px solid #d0ead8;
   }
-  .summary-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
-  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table th:first-child { text-align: left; }
+  .summary-table td {
+    padding: 8px 10px; border-bottom: 1px solid #f0f0f0;
+    text-align: center; border: 1px solid #f0f0f0;
+  }
+  .summary-table td:first-child { text-align: left; font-weight: 600; }
+  .summary-table .total-row td {
+    background: #e8f5e9; font-weight: 700; border-top: 2px solid #c8e6c9;
+  }
 
   .transfer-list { list-style: none; }
   .transfer-item {
@@ -222,9 +248,7 @@
   .transfer-item .amount { font-weight: 700; color: #e67e22; font-size: 15px; }
   .transfer-arrow { color: #aaa; margin: 0 6px; }
 
-  .badge-pay { color: #e55252; font-weight: 700; }
   .badge-receive { color: #2d6a4f; font-weight: 700; }
-
   .divider { border: none; border-top: 1px solid #eee; margin: 14px 0; }
 
   .select-all-btn {
@@ -232,79 +256,48 @@
     text-decoration: underline; margin-left: 4px;
   }
 
+  .share-hint {
+    font-size: 11px; color: #aaa; text-align: center; margin-top: 6px;
+  }
+
   /* ── 모바일 최적화 ───────────────────────────────── */
   @media (max-width: 600px) {
-    /* iOS 자동확대 방지: 입력칸 폰트 16px 이상 */
-    input[type=text], input[type=number], select {
-      font-size: 16px; padding: 11px 12px;
-    }
-
+    input[type=text], input[type=number], select { font-size: 16px; padding: 11px 12px; }
     .container { padding: 10px; }
-
     .card { padding: 16px; margin-bottom: 12px; border-radius: 10px; }
     .card h2 { font-size: 15px; margin-bottom: 12px; }
-
     .header h1 { font-size: 20px; }
     .header { padding: 20px 16px 32px; }
     .admin-btn { font-size: 10px; padding: 4px 8px; }
-
-    /* 행 → 세로 스택 */
     .row { flex-direction: column; gap: 10px; }
     .row .field { width: 100%; }
-
-    /* 버튼 터치 영역 확보 */
     .btn { padding: 11px 16px; font-size: 14px; min-height: 44px; }
-    .btn-green, .btn-red, .btn-blue { width: 100%; }
+    .btn-green, .btn-blue, .btn-orange { width: 100%; }
+    .btn-red { width: auto; }
     .btn-fetch { width: 100%; justify-content: center; min-height: 44px; font-size: 14px; }
     .btn-main { padding: 16px; font-size: 16px; }
-
-    /* 차량 위치 입력 + 조회버튼 세로 배치 */
     .loc-wrap { width: 100%; }
-
-    /* 오피넷 버튼 */
     .btn-opinet { width: 100%; flex-direction: row; gap: 6px; padding: 11px 14px; font-size: 13px; }
-
-    /* 체크박스 터치 영역 확보 */
     .checkbox-label { padding: 4px 0; min-height: 36px; font-size: 14px; }
     .checkbox-label input[type=checkbox] { width: 18px; height: 18px; }
-
-    /* 참가자 태그 */
     .tag { font-size: 13px; padding: 6px 14px; }
-
-    /* 카테고리 칩 */
     .chip { padding: 7px 16px; font-size: 13px; min-height: 36px; }
-
-    /* 결과 테이블 */
-    .summary-table { font-size: 13px; }
-    .summary-table th, .summary-table td { padding: 8px 6px; }
-
-    /* 송금 항목 */
+    .summary-table { font-size: 11px; }
+    .summary-table th, .summary-table td { padding: 6px 8px; }
     .transfer-item { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 14px; }
     .transfer-item .amount { font-size: 16px; }
-
-    /* 차량 비용 행 — 소유자/유류비/통행료 세로 정렬 */
     .vehicle-item .row, .expense-item .row { flex-direction: column; }
-
-    /* 주차비 행 라벨 */
-    .vehicle-item .row .field[style*="flex-end"] { width: 100%; padding-bottom: 0; }
-
-    /* API 키 입력 */
     .api-key-row { flex-direction: column; }
     .api-key-row .btn { width: 100%; }
-
-    /* 벙주 선택 */
     #bunjooSelect { font-size: 16px; }
-
-    /* 계좌 결과 */
     #accountResultText { font-size: 14px; word-break: break-all; }
-
-    /* 정산 결과 카드 */
     .result-card { padding: 16px; }
-
-    /* POI 드롭다운 */
     .poi-name { font-size: 14px; }
     .poi-addr { font-size: 12px; }
     .poi-item { padding: 10px 12px; }
+    .late-row { flex-direction: column; }
+    .late-row select, .late-row input[type=number] { font-size: 16px; }
+    .late-row .btn-red { width: 100%; }
   }
 </style>
 </head>
@@ -373,7 +366,16 @@
         </label>
       </div>
     </div>
-    <div style="font-size:12px;color:#aaa;">참가비는 정산 계산 시 참가자 전원에게 자동 부과됩니다.</div>
+    <div style="margin-top:10px;">
+      <label style="font-size:13px;color:#555;margin-bottom:6px;display:block;">
+        참가비 납부 대상 (산행 참석자만 체크)
+        <span class="select-all-btn" onclick="selectAllEntryMembers()">전체선택</span>
+      </label>
+      <div class="checkbox-group" id="entryFeeMembers">
+        <span style="color:#aaa;font-size:13px;">참가자를 먼저 추가해주세요</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#aaa;margin-top:8px;">식사만 참석한 인원은 체크 해제하세요.</div>
   </div>
 
   <!-- 1-2. 연비 / 유가 설정 -->
@@ -395,9 +397,7 @@
         🛢️ 오피넷<br>유가 조회
       </a>
     </div>
-    <div style="font-size:12px;color:#aaa;margin-top:-4px;">
-      오피넷에서 현재 유가를 확인한 후 위 칸에 직접 입력해주세요.
-    </div>
+    <div style="font-size:12px;color:#aaa;margin-top:-4px;">오피넷에서 현재 유가를 확인한 후 위 칸에 직접 입력해주세요.</div>
   </div>
 
   <!-- 2. 차량 운행비 -->
@@ -409,7 +409,7 @@
 
   <!-- 3. 공통 비용 -->
   <div class="card">
-    <h2>🍚 공통 비용 (식사비 · 입장료 · 기타)</h2>
+    <h2>🍚 공통 비용 (식사비 · 주류 · 기타)</h2>
     <div id="expenseList"></div>
     <button class="btn btn-green" onclick="addExpense()" style="width:100%">+ 비용 추가</button>
   </div>
@@ -441,22 +441,17 @@
     <h2>📊 정산 결과</h2>
 
     <h3 style="font-size:14px; color:#555; margin-bottom:8px;">개인별 부담 내역</h3>
-    <table class="summary-table">
-      <thead>
-        <tr>
-          <th>이름</th>
-          <th>총 부담액</th>
-          <th>받을 금액</th>
-        </tr>
-      </thead>
-      <tbody id="summaryBody"></tbody>
-    </table>
+    <div class="summary-wrap">
+      <table class="summary-table">
+        <thead id="summaryHead"></thead>
+        <tbody id="summaryBody"></tbody>
+      </table>
+    </div>
 
     <hr class="divider">
 
     <h3 style="font-size:14px; color:#555; margin-bottom:10px;">💸 송금 목록</h3>
     <ul class="transfer-list" id="transferList"></ul>
-
     <div id="noTransfer" style="display:none; text-align:center; color:#888; font-size:14px; padding:16px;">
       ✅ 모두 정산 완료! 추가 송금이 필요 없어요.
     </div>
@@ -468,16 +463,23 @@
         <span id="accountResultText" style="font-size:15px;font-weight:700;color:#2d6a4f;"></span>
       </div>
     </div>
+
+    <button class="btn-share" id="shareBtn" onclick="shareResult()">
+      📸 정산결과 이미지로 공유하기
+    </button>
+    <div class="share-hint">카카오톡·문자 등으로 바로 공유하거나 이미지로 저장할 수 있어요</div>
   </div>
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 let members = [];
 let vehicles = [];
 let expenses = [];
 let vCount = 0;
 let eCount = 0;
+let leCount = 0; // late entry counter
 
 // ─── 관리자 ───────────────────────────────────────────
 const ADMIN_PW = '8383123';
@@ -507,7 +509,6 @@ let effUnlocked = false;
 function toggleEffLock() {
   const input = document.getElementById('fuelEfficiency');
   const btn   = document.getElementById('effLockBtn');
-
   if (effUnlocked) {
     effUnlocked = false;
     input.readOnly = true;
@@ -517,12 +518,7 @@ function toggleEffLock() {
     btn.textContent = '🔒';
     return;
   }
-
-  const pw = prompt(
-    '연비 변경은 운영진만 가능합니다.\n\n' +
-    '비밀번호를 입력하거나 운영진에 문의하세요.\n\n' +
-    '📞 운영진 문의'
-  );
+  const pw = prompt('연비 변경은 운영진만 가능합니다.\n\n비밀번호를 입력하거나 운영진에 문의하세요.\n\n📞 운영진 문의');
   if (pw === null) return;
   if (pw === ADMIN_PW) {
     effUnlocked = true;
@@ -537,14 +533,13 @@ function toggleEffLock() {
   }
 }
 
-// ─── API 키 저장/로드 ──────────────────────────────────
+// ─── API 키 ────────────────────────────────────────────
 const DEFAULT_TMAP_KEY = 'yck6Q19qf68wznGV3l5Gb2X6qHDRcGNG4deY9OMd';
 
 window.addEventListener('load', () => {
   const savedKey = localStorage.getItem('tmapKey');
   const keyInput = document.getElementById('tmapKey');
-  if (savedKey) keyInput.value = savedKey;
-  else keyInput.value = DEFAULT_TMAP_KEY;
+  keyInput.value = savedKey || DEFAULT_TMAP_KEY;
   renderMembers();
 });
 
@@ -558,9 +553,9 @@ function saveApiKey() {
 }
 
 function getApiKey() {
-  const stored = localStorage.getItem('tmapKey');
-  const inputVal = document.getElementById('tmapKey').value.trim();
-  return inputVal || stored || DEFAULT_TMAP_KEY;
+  return document.getElementById('tmapKey').value.trim()
+    || localStorage.getItem('tmapKey')
+    || DEFAULT_TMAP_KEY;
 }
 
 // ─── 참가자 ───────────────────────────────────────────
@@ -597,10 +592,7 @@ const poiCoords = {};
 const debounceTimers = {};
 
 function hideDrop(id) {
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  }, 200);
+  setTimeout(() => { const el = document.getElementById(id); if (el) el.style.display = 'none'; }, 200);
 }
 
 function onLocInput(vid, type) {
@@ -608,23 +600,13 @@ function onLocInput(vid, type) {
   const dropId   = `v_${type}_drop_${vid}`;
   const coordKey = `v_${type}_coord_${vid}`;
   const keyword  = document.getElementById(inputId)?.value.trim();
-
   delete poiCoords[coordKey];
-
-  if (!keyword || keyword.length < 1) {
-    const el = document.getElementById(dropId);
-    if (el) el.style.display = 'none';
-    return;
-  }
-
+  if (!keyword) { const el = document.getElementById(dropId); if (el) el.style.display = 'none'; return; }
   clearTimeout(debounceTimers[inputId]);
   debounceTimers[inputId] = setTimeout(async () => {
     const apiKey = getApiKey();
     if (!apiKey) return;
-    try {
-      const pois = await searchPOIList(keyword, apiKey);
-      renderDrop(dropId, inputId, coordKey, pois);
-    } catch (_) {}
+    try { const pois = await searchPOIList(keyword, apiKey); renderDrop(dropId, inputId, coordKey, pois); } catch (_) {}
   }, 350);
 }
 
@@ -640,7 +622,6 @@ function renderDrop(dropId, inputId, coordKey, pois) {
   const drop = document.getElementById(dropId);
   if (!drop) return;
   if (!pois.length) { drop.style.display = 'none'; return; }
-
   drop.innerHTML = pois.map(poi => {
     const addr = poi.newAddressList?.newAddress?.[0]?.fullAddressRoad
       || [poi.upperAddrName, poi.middleAddrName, poi.lowerAddrName].filter(Boolean).join(' ');
@@ -666,52 +647,33 @@ function selectPOI(dropId, inputId, coordKey, name, lon, lat, addr) {
 // ─── T맵 API ──────────────────────────────────────────
 async function searchPOI(keyword, apiKey) {
   const url = `https://apis.openapi.sk.com/tmap/pois?version=1&searchKeyword=${encodeURIComponent(keyword)}&count=1&searchType=all&resCoordType=WGS84GEO&reqCoordType=WGS84GEO`;
-  const res = await fetch(url, {
-    headers: { 'appKey': apiKey, 'Accept': 'application/json' }
-  });
-  if (!res.ok) {
-    const msg = await res.text().catch(() => '');
-    throw new Error(`POI 검색 실패 (${res.status})${msg ? ': ' + msg.slice(0,80) : ''}`);
-  }
+  const res = await fetch(url, { headers: { 'appKey': apiKey, 'Accept': 'application/json' } });
+  if (!res.ok) throw new Error(`POI 검색 실패 (${res.status})`);
   const data = await res.json();
   const poi = data.searchPoiInfo?.pois?.poi?.[0];
-  if (!poi) throw new Error(`"${keyword}" 위치를 찾을 수 없어요. 더 구체적인 이름으로 입력해보세요.`);
+  if (!poi) throw new Error(`"${keyword}" 위치를 찾을 수 없어요.`);
   return { lon: poi.frontLon, lat: poi.frontLat, name: poi.name };
 }
 
 async function getRoute(startX, startY, endX, endY, startName, endName, apiKey) {
-  const body = new URLSearchParams({
-    startX, startY, endX, endY,
-    startName, endName,
-    searchOption: '0',
-    reqCoordType: 'WGS84GEO',
-    resCoordType: 'WGS84GEO',
-    trafficInfo: 'N'
-  });
+  const body = new URLSearchParams({ startX, startY, endX, endY, startName, endName, searchOption: '0', reqCoordType: 'WGS84GEO', resCoordType: 'WGS84GEO', trafficInfo: 'N' });
   const res = await fetch('https://apis.openapi.sk.com/tmap/routes?version=1&format=json', {
     method: 'POST',
     headers: { 'appKey': apiKey, 'Content-Type': 'application/x-www-form-urlencoded' },
     body: body.toString()
   });
   if (!res.ok) {
-    if (res.status === 403) throw new Error('경로 API 권한 없음 (403)\nSK Open API 콘솔 → 내 앱 → 사용 중인 API 목록에서\n"자동차 경로" API가 활성화되어 있는지 확인해주세요.');
-    const msg = await res.text().catch(() => '');
-    throw new Error(`경로 조회 실패 (${res.status})${msg ? ': ' + msg.slice(0,80) : ''}`);
+    if (res.status === 403) throw new Error('경로 API 권한 없음 (403)\n"자동차 경로" API가 활성화되어 있는지 확인해주세요.');
+    throw new Error(`경로 조회 실패 (${res.status})`);
   }
   const data = await res.json();
   const props = data.features?.[0]?.properties;
   if (!props) throw new Error('경로를 찾을 수 없어요.');
-  return {
-    distanceM: props.totalDistance,
-    timeS: props.totalTime,
-    toll: props.totalFare || 0
-  };
+  return { distanceM: props.totalDistance, timeS: props.totalTime, toll: props.totalFare || 0 };
 }
 
 async function fetchRouteData(vid) {
   const apiKey = getApiKey();
-  if (!apiKey) { alert('먼저 T맵 API 키를 입력하고 저장해주세요.'); return; }
-
   const startVal = document.getElementById(`v_start_${vid}`)?.value.trim();
   const endVal   = document.getElementById(`v_end_${vid}`)?.value.trim();
   if (!startVal || !endVal) { alert('출발지와 도착지를 모두 입력해주세요.'); return; }
@@ -720,36 +682,24 @@ async function fetchRouteData(vid) {
   const spinner = document.getElementById(`v_spinner_${vid}`);
   const resultBox = document.getElementById(`v_route_result_${vid}`);
 
-  btn.disabled = true;
-  spinner.style.display = 'inline-block';
+  btn.disabled = true; spinner.style.display = 'inline-block';
   btn.querySelector('.btn-label').textContent = '조회 중...';
   resultBox.style.display = 'none';
 
   try {
-    let start = poiCoords[`v_start_coord_${vid}`];
-    let end   = poiCoords[`v_end_coord_${vid}`];
-    if (!start) start = await searchPOI(startVal, apiKey);
-    if (!end)   end   = await searchPOI(endVal, apiKey);
-
+    let start = poiCoords[`v_start_coord_${vid}`] || await searchPOI(startVal, apiKey);
+    let end   = poiCoords[`v_end_coord_${vid}`]   || await searchPOI(endVal, apiKey);
     const route = await getRoute(start.lon, start.lat, end.lon, end.lat, start.name, end.name, apiKey);
-
     const distKm = (route.distanceM / 1000).toFixed(1);
     const timeMin = Math.round(route.timeS / 60);
-    const efficiency = parseFloat(document.getElementById('fuelEfficiency').value) || 12;
+    const efficiency = parseFloat(document.getElementById('fuelEfficiency').value) || 13;
     const fuelPricePerL = parseFloat(document.getElementById('fuelPrice').value) || 1650;
-
-    // 왕복 계산
-    const roundDistKm = route.distanceM / 1000 * 2;
-    const fuelCost = Math.round(roundDistKm / efficiency * fuelPricePerL);
+    const fuelCost = Math.round(route.distanceM / 1000 * 2 / efficiency * fuelPricePerL);
     const tollCost = route.toll * 2;
-
     document.getElementById(`v_fuel_${vid}`).value = fuelCost;
     document.getElementById(`v_toll_${vid}`).value = tollCost;
-
     resultBox.innerHTML = `
-      <div class="route-info">
-        <div class="ri">📍 <strong>${start.name}</strong> → <strong>${end.name}</strong></div>
-      </div>
+      <div class="route-info"><div class="ri">📍 <strong>${start.name}</strong> → <strong>${end.name}</strong></div></div>
       <div class="route-info" style="margin-top:6px;">
         <div class="ri">🛣️ 편도 <strong>${distKm} km</strong></div>
         <div class="ri">⏱️ <strong>${timeMin}분</strong> 소요</div>
@@ -757,12 +707,10 @@ async function fetchRouteData(vid) {
         <div class="ri">🚧 왕복 통행료 <strong>${comma(tollCost)}원</strong></div>
       </div>`;
     resultBox.style.display = 'block';
-
   } catch (e) {
     alert('경로 조회 실패: ' + e.message);
   } finally {
-    btn.disabled = false;
-    spinner.style.display = 'none';
+    btn.disabled = false; spinner.style.display = 'none';
     btn.querySelector('.btn-label').textContent = '경로 자동 조회';
   }
 }
@@ -825,10 +773,7 @@ function vehicleItemHTML(id) {
       </div>
       <label>탑승자 선택 <span class="select-all-btn" onclick="selectAllPassengers(${id})">전체선택</span></label>
       <div class="checkbox-group" id="v_pass_${id}">
-        ${members.map(m => `
-          <label class="checkbox-label">
-            <input type="checkbox" value="${m}" id="vp_${id}_${m}"> ${m}
-          </label>`).join('')}
+        ${members.map(m => `<label class="checkbox-label"><input type="checkbox" value="${m}" id="vp_${id}_${m}"> ${m}</label>`).join('')}
       </div>
       <div style="margin-top:8px;">
         <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
@@ -841,8 +786,7 @@ function vehicleItemHTML(id) {
 function addVehicle() {
   const id = ++vCount;
   vehicles.push({ id });
-  const el = document.getElementById('vehicleList');
-  el.insertAdjacentHTML('beforeend', vehicleItemHTML(id));
+  document.getElementById('vehicleList').insertAdjacentHTML('beforeend', vehicleItemHTML(id));
 }
 
 function removeVehicle(id) {
@@ -910,19 +854,75 @@ function expenseItemHTML(id) {
             <input type="checkbox" value="${m}" id="em_${id}_${m}" checked> ${m}
           </label>`).join('')}
       </div>
+      <div class="late-section">
+        <div class="late-section-header">
+          <span>⏰ 늦게 온 인원 (개별 금액 지정)</span>
+          <button class="btn btn-orange" style="font-size:11px;padding:4px 10px;" onclick="addLateEntry(${id})">+ 추가</button>
+        </div>
+        <div id="e_late_${id}"></div>
+        <div style="font-size:11px;color:#aaa;">지정 금액만 부담하고, 나머지는 위 분담 인원이 균등 분담합니다.</div>
+      </div>
     </div>`;
 }
 
 function addExpense() {
   const id = ++eCount;
   expenses.push({ id });
-  const el = document.getElementById('expenseList');
-  el.insertAdjacentHTML('beforeend', expenseItemHTML(id));
+  document.getElementById('expenseList').insertAdjacentHTML('beforeend', expenseItemHTML(id));
 }
 
 function removeExpense(id) {
   expenses = expenses.filter(e => e.id !== id);
   document.getElementById(`expense_${id}`)?.remove();
+}
+
+// ─── 늦게 온 인원 ─────────────────────────────────────
+function addLateEntry(eid) {
+  const lid = ++leCount;
+  const container = document.getElementById(`e_late_${eid}`);
+  const opts = '<option value="">이름 선택</option>' + members.map(m => `<option value="${m}">${m}</option>`).join('');
+  container.insertAdjacentHTML('beforeend', `
+    <div class="late-entry" id="le_${eid}_${lid}">
+      <div class="late-row">
+        <select class="late-name-sel" data-prev="" onchange="onLateNameChange(${eid},${lid},this)">${opts}</select>
+        <input type="number" class="late-amt-inp" placeholder="부담액 (원)" min="0">
+        <button class="btn btn-red" onclick="removeLateEntry(${eid},${lid})">삭제</button>
+      </div>
+    </div>`);
+}
+
+function onLateNameChange(eid, lid, sel) {
+  const prev = sel.dataset.prev;
+  const next = sel.value;
+  // 이전 선택 멤버 체크박스 복원
+  if (prev) {
+    const cb  = document.getElementById(`em_${eid}_${prev}`);
+    const lbl = document.getElementById(`em_label_${eid}_${prev}`);
+    if (cb) { cb.disabled = false; cb.checked = true; }
+    if (lbl) lbl.classList.remove('disabled-member');
+  }
+  // 새 선택 멤버 체크박스 비활성화 (개별 금액으로 대체)
+  if (next) {
+    const cb  = document.getElementById(`em_${eid}_${next}`);
+    const lbl = document.getElementById(`em_label_${eid}_${next}`);
+    if (cb) { cb.checked = false; cb.disabled = true; }
+    if (lbl) lbl.classList.add('disabled-member');
+  }
+  sel.dataset.prev = next;
+}
+
+function removeLateEntry(eid, lid) {
+  const entry = document.getElementById(`le_${eid}_${lid}`);
+  if (!entry) return;
+  const sel = entry.querySelector('.late-name-sel');
+  const name = sel?.value;
+  if (name) {
+    const cb  = document.getElementById(`em_${eid}_${name}`);
+    const lbl = document.getElementById(`em_label_${eid}_${name}`);
+    if (cb) { cb.disabled = false; cb.checked = true; }
+    if (lbl) lbl.classList.remove('disabled-member');
+  }
+  entry.remove();
 }
 
 function updateExpenseMembers() {
@@ -943,17 +943,25 @@ function updateExpenseMembers() {
             ${!existing.has(m) || checked.has(m) ? 'checked' : ''}> ${m}
         </label>`).join('');
     }
-    const ndGroup = document.getElementById(`e_nodrinker_${e.id}`);
-    if (ndGroup) {
-      const existingND = new Set([...ndGroup.querySelectorAll('input[type=checkbox]')].map(cb => cb.value));
-      const checkedND  = new Set([...ndGroup.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.value));
-      ndGroup.innerHTML = members.map(m => `
-        <label class="checkbox-label">
-          <input type="checkbox" value="${m}" id="end_${e.id}_${m}"
-            ${existingND.has(m) && checkedND.has(m) ? 'checked' : ''}
-            onchange="syncNonDrinker(${e.id},'${m}')"> ${m}
-        </label>`).join('');
-      members.forEach(m => syncNonDrinker(e.id, m));
+    // 늦게 온 인원 select 업데이트
+    const lateContainer = document.getElementById(`e_late_${e.id}`);
+    if (lateContainer) {
+      const newOpts = '<option value="">이름 선택</option>' + members.map(m => `<option value="${m}">${m}</option>`).join('');
+      lateContainer.querySelectorAll('.late-name-sel').forEach(sel => {
+        const prev = sel.value;
+        sel.innerHTML = newOpts;
+        if (members.includes(prev)) { sel.value = prev; sel.dataset.prev = prev; }
+        else { sel.value = ''; sel.dataset.prev = ''; }
+      });
+      // 비활성화 상태 재적용
+      lateContainer.querySelectorAll('.late-name-sel').forEach(sel => {
+        if (sel.value) {
+          const cb  = document.getElementById(`em_${e.id}_${sel.value}`);
+          const lbl = document.getElementById(`em_label_${e.id}_${sel.value}`);
+          if (cb) { cb.checked = false; cb.disabled = true; }
+          if (lbl) lbl.classList.add('disabled-member');
+        }
+      });
     }
   });
 }
@@ -971,32 +979,9 @@ function setExpenseName(eid, name, btn) {
   if (btn) btn.classList.add('active');
 }
 
-function syncNonDrinker(eid, member) {
-  const noCb  = document.getElementById(`end_${eid}_${member}`);
-  const memCb = document.getElementById(`em_${eid}_${member}`);
-  const lbl   = document.getElementById(`em_label_${eid}_${member}`);
-  if (!noCb || !memCb) return;
-  if (noCb.checked) {
-    memCb.checked = false;
-    memCb.disabled = true;
-    if (lbl) lbl.classList.add('disabled-member');
-  } else {
-    memCb.disabled = false;
-    memCb.checked = true;
-    if (lbl) lbl.classList.remove('disabled-member');
-  }
-}
-
 function memberOptions() {
   if (members.length === 0) return '<option value="">-- 먼저 참가자를 추가하세요 --</option>';
   return members.map(m => `<option value="${m}">${m}</option>`).join('');
-}
-
-function updateAllMemberOptions() {
-  updateVehicleMembers();
-  updateExpenseMembers();
-  updateEntryFeeOptions();
-  updateBunjooOptions();
 }
 
 function updateEntryFeeOptions() {
@@ -1005,6 +990,26 @@ function updateEntryFeeOptions() {
   const prev = sel.value;
   sel.innerHTML = memberOptions();
   if (members.includes(prev)) sel.value = prev;
+}
+
+function updateEntryFeeMembers() {
+  const group = document.getElementById('entryFeeMembers');
+  if (!group) return;
+  if (members.length === 0) {
+    group.innerHTML = '<span style="color:#aaa;font-size:13px;">참가자를 먼저 추가해주세요</span>';
+    return;
+  }
+  const existing = new Set([...group.querySelectorAll('input[type=checkbox]')].map(cb => cb.value));
+  const checked  = new Set([...group.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.value));
+  group.innerHTML = members.map(m => `
+    <label class="checkbox-label">
+      <input type="checkbox" value="${m}" id="ef_${m}"
+        ${!existing.has(m) || checked.has(m) ? 'checked' : ''}> ${m}
+    </label>`).join('');
+}
+
+function selectAllEntryMembers() {
+  document.querySelectorAll('#entryFeeMembers input[type=checkbox]').forEach(cb => cb.checked = true);
 }
 
 function updateBunjooOptions() {
@@ -1016,24 +1021,35 @@ function updateBunjooOptions() {
   if (members.includes(prev)) sel.value = prev;
 }
 
+function updateAllMemberOptions() {
+  updateVehicleMembers();
+  updateExpenseMembers();
+  updateEntryFeeOptions();
+  updateEntryFeeMembers();
+  updateBunjooOptions();
+}
+
 // ─── 정산 계산 ────────────────────────────────────────
 function calculate() {
   if (members.length < 2) return alert('참가자를 2명 이상 추가해주세요.');
 
-  const paid = {};
-  const share = {};
-  members.forEach(m => { paid[m] = 0; share[m] = 0; });
+  const paid         = {};
+  const share        = {};
+  const shareEntry   = {};
+  const shareVehicle = {};
+  members.forEach(m => { paid[m] = 0; share[m] = 0; shareEntry[m] = 0; shareVehicle[m] = 0; });
 
-  // 참가비
-  const entryOn    = document.getElementById('entryFeeOn')?.checked;
-  const entryFee   = Number(document.getElementById('entryFee')?.value) || 0;
-  const entryPayer = document.getElementById('entryFeePayer')?.value;
-  if (entryOn && entryFee > 0 && entryPayer) {
-    const total = entryFee * members.length;
-    paid[entryPayer] = (paid[entryPayer] || 0) + total;
-    members.forEach(m => { share[m] = (share[m] || 0) + entryFee; });
+  // ── 참가비
+  const entryOn      = document.getElementById('entryFeeOn')?.checked;
+  const entryFee     = Number(document.getElementById('entryFee')?.value) || 0;
+  const entryPayer   = document.getElementById('entryFeePayer')?.value;
+  const entryTargets = [...document.querySelectorAll('#entryFeeMembers input[type=checkbox]:checked')].map(cb => cb.value);
+  if (entryOn && entryFee > 0 && entryPayer && entryTargets.length > 0) {
+    paid[entryPayer] += entryFee * entryTargets.length;
+    entryTargets.forEach(m => { share[m] += entryFee; shareEntry[m] += entryFee; });
   }
 
+  // ── 차량 운행비
   for (const v of vehicles) {
     const owner      = document.getElementById(`v_owner_${v.id}`)?.value;
     const fuel       = Number(document.getElementById(`v_fuel_${v.id}`)?.value) || 0;
@@ -1043,70 +1059,124 @@ function calculate() {
     const parkDriver = document.getElementById(`v_park_driver_${v.id}`)?.checked;
     const total = fuel + toll + park;
     if (total <= 0) continue;
-
     const passengers = [...document.querySelectorAll(`#v_pass_${v.id} input[type=checkbox]:checked`)].map(cb => cb.value);
     if (passengers.length === 0) { alert(`차량 ${v.id}의 탑승자를 선택해주세요.`); return; }
     if (!owner) { alert(`차량 ${v.id}의 운전자를 선택해주세요.`); return; }
-
-    paid[owner] = (paid[owner] || 0) + total;
-
-    // 유류비 + 통행료 분담
+    paid[owner] += total;
     const runCost = fuel + toll;
     if (runCost > 0) {
       const payers = driverFree ? passengers.filter(p => p !== owner) : passengers;
       if (payers.length === 0) { alert(`차량 ${v.id}: 운전자 면제 시 탑승자가 최소 1명 이상 필요해요.`); return; }
       const each = Math.round(runCost / payers.length);
-      payers.forEach(p => { share[p] = (share[p] || 0) + each; });
+      payers.forEach(p => { share[p] += each; shareVehicle[p] += each; });
     }
-
-    // 주차비 분담
     if (park > 0) {
       if (parkDriver) {
-        share[owner] = (share[owner] || 0) + park;
+        share[owner] += park; shareVehicle[owner] += park;
       } else {
         const each = Math.round(park / passengers.length);
-        passengers.forEach(p => { share[p] = (share[p] || 0) + each; });
+        passengers.forEach(p => { share[p] += each; shareVehicle[p] += each; });
       }
     }
   }
 
+  // ── 공통 비용 (항목별 개별 추적)
+  const expenseDetails = []; // { name, amounts: { member: amount } }
+
   for (const e of expenses) {
-    const name   = document.getElementById(`e_name_${e.id}`)?.value.trim() || `항목${e.id}`;
+    const eName  = document.getElementById(`e_name_${e.id}`)?.value.trim() || `항목${e.id}`;
     const amount = Number(document.getElementById(`e_amount_${e.id}`)?.value) || 0;
     const payer  = document.getElementById(`e_payer_${e.id}`)?.value;
     if (amount <= 0) continue;
-    if (!payer) { alert(`"${name}"의 납부자를 선택해주세요.`); return; }
+    if (!payer) { alert(`"${eName}"의 납부자를 선택해주세요.`); return; }
 
+    const memberAmounts = {};
+
+    // 늦게 온 인원 처리
+    const lateContainer = document.getElementById(`e_late_${e.id}`);
+    const lateMap = {};
+    if (lateContainer) {
+      lateContainer.querySelectorAll('.late-entry').forEach(entry => {
+        const lateName = entry.querySelector('.late-name-sel')?.value;
+        const lateAmt  = Number(entry.querySelector('.late-amt-inp')?.value) || 0;
+        if (lateName && lateAmt > 0) lateMap[lateName] = (lateMap[lateName] || 0) + lateAmt;
+      });
+    }
+    const lateTotal = Object.values(lateMap).reduce((s, v) => s + v, 0);
+    if (lateTotal > amount) { alert(`"${eName}": 늦게 온 인원 합계(${comma(lateTotal)}원)가 총금액(${comma(amount)}원)을 초과합니다.`); return; }
+
+    Object.entries(lateMap).forEach(([name, amt]) => {
+      share[name] += amt;
+      memberAmounts[name] = amt;
+    });
+
+    // 나머지 균등 분담
     const splitters = [...document.querySelectorAll(`#e_members_${e.id} input[type=checkbox]:checked`)].map(cb => cb.value);
-    if (splitters.length === 0) { alert(`"${name}"의 분담 인원을 선택해주세요.`); return; }
+    const remaining = amount - lateTotal;
 
-    paid[payer] = (paid[payer] || 0) + amount;
-    const each = Math.round(amount / splitters.length);
-    splitters.forEach(m => { share[m] = (share[m] || 0) + each; });
+    if (remaining > 0) {
+      if (splitters.length === 0) { alert(`"${eName}"의 분담 인원을 선택해주세요.`); return; }
+      const each = Math.round(remaining / splitters.length);
+      splitters.forEach(m => { share[m] += each; memberAmounts[m] = (memberAmounts[m] || 0) + each; });
+    } else if (splitters.length === 0 && Object.keys(lateMap).length === 0) {
+      alert(`"${eName}"의 분담 인원을 선택해주세요.`); return;
+    }
+
+    paid[payer] += amount;
+    expenseDetails.push({ name: eName, amounts: memberAmounts });
   }
 
+  // ── 잔액 계산
   const balance = {};
   members.forEach(m => { balance[m] = (paid[m] || 0) - (share[m] || 0); });
 
+  // ── 결과 테이블 헤더 동적 생성
+  const hasEntry   = members.some(m => shareEntry[m]   > 0);
+  const hasVehicle = members.some(m => shareVehicle[m] > 0);
+
+  const summaryHead = document.getElementById('summaryHead');
+  let headCols = '<th>이름</th>';
+  if (hasEntry)   headCols += '<th>참가비</th>';
+  if (hasVehicle) headCols += '<th>차량운행비</th>';
+  expenseDetails.forEach(ed => { headCols += `<th>${ed.name}</th>`; });
+  headCols += '<th>합계</th><th>받을 금액</th>';
+  summaryHead.innerHTML = `<tr>${headCols}</tr>`;
+
+  // ── 개인별 행
   const tbody = document.getElementById('summaryBody');
   tbody.innerHTML = members.map(m => {
-    const b = balance[m];
+    const b       = balance[m];
     const receive = b > 0 ? `<span class="badge-receive">+${comma(roundUp10(b))}원</span>` : '';
-    return `<tr>
-      <td>${m}</td>
-      <td>${comma(roundUp10(share[m] || 0))}원</td>
-      <td>${receive}</td>
-    </tr>`;
+    const total   = roundUp10(share[m] || 0);
+    let row = `<td>${m}</td>`;
+    if (hasEntry)   row += `<td>${shareEntry[m]   > 0 ? comma(roundUp10(shareEntry[m]))   + '원' : '-'}</td>`;
+    if (hasVehicle) row += `<td>${shareVehicle[m] > 0 ? comma(roundUp10(shareVehicle[m])) + '원' : '-'}</td>`;
+    expenseDetails.forEach(ed => {
+      const amt = ed.amounts[m] || 0;
+      row += `<td>${amt > 0 ? comma(roundUp10(amt)) + '원' : '-'}</td>`;
+    });
+    row += `<td><strong>${comma(total)}원</strong></td><td>${receive}</td>`;
+    return `<tr>${row}</tr>`;
   }).join('');
 
-  const bunjoo = document.getElementById('bunjooSelect')?.value;
-  const transfers = bunjoo ? settleViaBunjoo(balance, bunjoo) : settleMinTransfers(balance);
-  const tList = document.getElementById('transferList');
-  const noTransfer = document.getElementById('noTransfer');
+  // ── 합계 행
+  let totalRow = '<td><strong>합계</strong></td>';
+  if (hasEntry)   totalRow += `<td><strong>${comma(members.reduce((s,m) => s + roundUp10(shareEntry[m]||0),   0))}원</strong></td>`;
+  if (hasVehicle) totalRow += `<td><strong>${comma(members.reduce((s,m) => s + roundUp10(shareVehicle[m]||0), 0))}원</strong></td>`;
+  expenseDetails.forEach(ed => {
+    const colTotal = Object.values(ed.amounts).reduce((s, v) => s + roundUp10(v), 0);
+    totalRow += `<td><strong>${comma(colTotal)}원</strong></td>`;
+  });
+  totalRow += `<td><strong>${comma(members.reduce((s,m) => s + roundUp10(share[m]||0), 0))}원</strong></td><td></td>`;
+  tbody.innerHTML += `<tr class="total-row">${totalRow}</tr>`;
 
+  // ── 송금 목록
+  const bunjoo     = document.getElementById('bunjooSelect')?.value;
+  const transfers  = bunjoo ? settleViaBunjoo(balance, bunjoo) : settleMinTransfers(balance);
+  const tList      = document.getElementById('transferList');
+  const noTransfer = document.getElementById('noTransfer');
   if (transfers.length === 0) {
-    tList.innerHTML = '';
-    noTransfer.style.display = 'block';
+    tList.innerHTML = ''; noTransfer.style.display = 'block';
   } else {
     noTransfer.style.display = 'none';
     const header = bunjoo
@@ -1119,14 +1189,13 @@ function calculate() {
       </li>`).join('');
   }
 
-  // 계좌 안내
+  // ── 계좌 안내
   const bank    = document.getElementById('bankName').value.trim();
   const account = document.getElementById('bankAccount').value.trim();
   const holder  = document.getElementById('bankHolder').value.trim();
   const accDiv  = document.getElementById('accountResult');
   if (bank || account || holder) {
-    document.getElementById('accountResultText').textContent =
-      `${bank}  ${account}  ${holder}`;
+    document.getElementById('accountResultText').textContent = `${bank}  ${account}  ${holder}`;
     accDiv.style.display = 'block';
   } else {
     accDiv.style.display = 'none';
@@ -1137,9 +1206,68 @@ function calculate() {
   resultCard.scrollIntoView({ behavior: 'smooth' });
 }
 
-function roundUp10(n) {
-  return Math.ceil(n / 10) * 10;
+// ─── 정산결과 공유 ────────────────────────────────────
+async function shareResult() {
+  const resultCard = document.getElementById('resultCard');
+  if (!resultCard || resultCard.style.display === 'none') {
+    alert('먼저 정산 계산하기를 눌러주세요.');
+    return;
+  }
+
+  const btn = document.getElementById('shareBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ 이미지 생성 중...';
+
+  try {
+    // 공유 버튼 임시 숨김 (이미지에서 제외)
+    btn.style.visibility = 'hidden';
+    const hintEl = resultCard.querySelector('.share-hint');
+    if (hintEl) hintEl.style.visibility = 'hidden';
+
+    const canvas = await html2canvas(resultCard, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      scrollX: 0,
+      scrollY: -window.scrollY
+    });
+
+    btn.style.visibility = 'visible';
+    if (hintEl) hintEl.style.visibility = 'visible';
+
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], '파샨파샨_정산결과.png', { type: 'image/png' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: '파샨파샨 정산결과', text: '정산결과를 확인하세요!' });
+        } catch (err) {
+          if (err.name !== 'AbortError') downloadCanvas(canvas);
+        }
+      } else {
+        downloadCanvas(canvas);
+      }
+    }, 'image/png');
+
+  } catch (e) {
+    btn.style.visibility = 'visible';
+    alert('이미지 생성 실패: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📸 정산결과 이미지로 공유하기';
+  }
 }
+
+function downloadCanvas(canvas) {
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = '파샨파샨_정산결과.png';
+  a.click();
+}
+
+// ─── 유틸 ──────────────────────────────────────────────
+function roundUp10(n) { return Math.ceil(n / 10) * 10; }
 
 function settleViaBunjoo(balance, bunjoo) {
   const transfers = [];
@@ -1147,13 +1275,8 @@ function settleViaBunjoo(balance, bunjoo) {
     if (name === bunjoo) return;
     const amount = roundUp10(Math.abs(b));
     if (amount < 10) return;
-    if (b < 0) {
-      // 돈 내야 하는 사람 → 벙주에게 입금
-      transfers.push({ from: name, to: bunjoo, amount });
-    } else {
-      // 돈 받아야 하는 사람 → 벙주가 재입금
-      transfers.push({ from: bunjoo, to: name, amount });
-    }
+    if (b < 0) transfers.push({ from: name, to: bunjoo, amount });
+    else transfers.push({ from: bunjoo, to: name, amount });
   });
   return transfers;
 }
@@ -1166,23 +1289,19 @@ function settleMinTransfers(balance) {
   });
   pos.sort((a, b) => b.b - a.b);
   neg.sort((a, b) => b.b - a.b);
-
   const result = [];
   let i = 0, j = 0;
   while (i < pos.length && j < neg.length) {
     const amount = Math.min(pos[i].b, neg[j].b);
     result.push({ from: neg[j].name, to: pos[i].name, amount: roundUp10(amount) });
-    pos[i].b -= amount;
-    neg[j].b -= amount;
+    pos[i].b -= amount; neg[j].b -= amount;
     if (pos[i].b < 1) i++;
     if (neg[j].b < 1) j++;
   }
   return result;
 }
 
-function comma(n) {
-  return Math.abs(n).toLocaleString('ko-KR');
-}
+function comma(n) { return Math.abs(n).toLocaleString('ko-KR'); }
 </script>
 </body>
 </html>
