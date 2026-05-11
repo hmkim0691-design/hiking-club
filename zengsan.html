@@ -560,15 +560,15 @@ const DEFAULT_TMAP_KEY = 'yck6Q19qf68wznGV3l5Gb2X6qHDRcGNG4deY9OMd';
 
 window.addEventListener('load', () => {
   // 공유 링크로 접속했는지 확인
-  const hash = location.hash;
-  if (hash.startsWith('#r=')) {
+  const r = new URLSearchParams(location.search).get('r');
+  if (r) {
     try {
-      const data = JSON.parse(decodeURIComponent(escape(atob(hash.slice(3)))));
+      const data = JSON.parse(decodeURIComponent(escape(atob(r))));
       if (data.v === 1 && data.cols && data.rows) {
         showSharedResult(data);
         return;
       }
-    } catch (e) { /* 잘못된 해시 → 일반 폼 표시 */ }
+    } catch (e) { /* 잘못된 파라미터 → 일반 폼 표시 */ }
   }
   // 일반 폼 초기화
   const savedKey = localStorage.getItem('tmapKey');
@@ -1229,7 +1229,7 @@ function shareResultLink() {
   if (!lastResultData) { alert('먼저 정산 계산하기를 눌러주세요.'); return; }
 
   const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(lastResultData))));
-  const url = location.origin + location.pathname + '#r=' + encoded;
+  const url = location.origin + location.pathname + '?r=' + encoded;
 
   const accountLine = [lastResultData.bank, lastResultData.account, lastResultData.holder]
     .filter(Boolean).join(' ');
@@ -1288,7 +1288,7 @@ function showSharedResult(data) {
 }
 
 function resetToForm() {
-  history.replaceState(null, '', location.pathname + location.search);
+  history.replaceState(null, '', location.pathname);
   document.getElementById('sharedView').style.display = 'none';
   document.getElementById('mainForm').style.display = 'block';
   // 폼 초기화
