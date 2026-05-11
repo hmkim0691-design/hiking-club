@@ -1137,9 +1137,11 @@ function calculate() {
   // ── 개인별 행
   const tbody = document.getElementById('summaryBody');
   tbody.innerHTML = members.map(m => {
-    const b       = balance[m];
-    const receive = b > 0 ? `<span class="badge-receive">+${comma(roundUp10(b))}원</span>` : '';
-    const total   = roundUp10(share[m] || 0);
+    const totalPaid = roundUp10(paid[m] || 0);
+    const receive   = totalPaid > 0
+      ? `<span class="badge-receive">${comma(totalPaid)}원</span>`
+      : '';
+    const total = roundUp10(share[m] || 0);
     let row = `<td>${m}</td>`;
     if (hasEntry)   row += `<td>${shareEntry[m]   > 0 ? comma(roundUp10(shareEntry[m]))   + '원' : '-'}</td>`;
     if (hasVehicle) row += `<td>${shareVehicle[m] > 0 ? comma(roundUp10(shareVehicle[m])) + '원' : '-'}</td>`;
@@ -1191,16 +1193,15 @@ async function shareResult() {
   btn.disabled = true;
   btn.textContent = '⏳ 이미지 생성 중...';
 
-  // 캡처용 클론: 스크롤 위치 무관하게 전체 높이를 오프스크린에서 렌더링
+  // 캡처용 클론: absolute 배치로 뷰포트 높이 제한 없이 전체 높이 캡처
   const wrapper = document.createElement('div');
   wrapper.style.cssText =
-    'position:fixed;left:-9999px;top:0;' +
-    `width:${resultCard.offsetWidth}px;` +
+    'position:absolute;left:-9999px;top:0;' +
+    `width:${Math.min(resultCard.offsetWidth, 700)}px;` +
     'background:#ffffff;font-family:\'Malgun Gothic\',sans-serif;';
 
   const clone = resultCard.cloneNode(true);
   clone.style.cssText = 'display:block;margin:0;box-shadow:none;border-radius:12px;';
-  // 공유 버튼·힌트는 이미지에서 제외
   clone.querySelector('#shareBtn')?.remove();
   clone.querySelector('.share-hint')?.remove();
 
@@ -1208,13 +1209,20 @@ async function shareResult() {
   document.body.appendChild(wrapper);
 
   try {
-    await new Promise(r => setTimeout(r, 80)); // 렌더 대기
+    await new Promise(r => setTimeout(r, 150)); // 렌더 대기
+
+    const fullW = wrapper.scrollWidth;
+    const fullH = wrapper.scrollHeight;
 
     const canvas = await html2canvas(wrapper, {
       backgroundColor: '#ffffff',
       scale: 2,
       useCORS: true,
-      logging: false
+      logging: false,
+      width: fullW,
+      height: fullH,
+      windowWidth: fullW,
+      windowHeight: fullH
     });
 
     document.body.removeChild(wrapper);
