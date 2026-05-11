@@ -452,11 +452,11 @@
         </div>
       </div>
 
-      <button class="btn-share" id="shareBtn" onclick="shareResultLink()">
-        🔗 정산결과 링크 공유하기
+      <button class="btn-share" id="shareBtn" onclick="shareResultImage()">
+        📷 정산결과 이미지 저장/공유
       </button>
       <div style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">
-        링크를 열면 누구나 정산결과를 확인할 수 있어요
+        이미지를 저장하거나 카카오톡에 공유하세요
       </div>
     </div>
 
@@ -1224,35 +1224,194 @@ function calculate() {
   resultCard.scrollIntoView({ behavior: 'smooth' });
 }
 
-// ─── 링크 공유 ────────────────────────────────────────
-function shareResultLink() {
+// ─── 이미지 공유 ──────────────────────────────────────
+async function shareResultImage() {
   if (!lastResultData) { alert('먼저 정산 계산하기를 눌러주세요.'); return; }
-
-  const encoded = b64uEncode(JSON.stringify(lastResultData));
-  const url = location.origin + location.pathname + '?r=' + encoded;
-
-  const accountLine = [lastResultData.bank, lastResultData.account, lastResultData.holder]
-    .filter(Boolean).join(' ');
-  const shareText = `파샨파샨 정산결과를 확인하세요!${accountLine ? '\n\n💳 입금 계좌\n' + accountLine : ''}`;
-
   const btn = document.getElementById('shareBtn');
   btn.disabled = true;
-
-  if (navigator.share) {
-    navigator.share({ title: '파샨파샨 정산결과', url, text: shareText })
-      .catch(() => {})
-      .finally(() => { btn.disabled = false; });
-  } else {
-    navigator.clipboard.writeText(url)
-      .then(() => {
-        btn.textContent = '✅ 링크 복사됨!';
-        setTimeout(() => { btn.textContent = '🔗 정산결과 링크 공유하기'; btn.disabled = false; }, 2500);
-      })
-      .catch(() => {
-        prompt('아래 링크를 복사해서 카카오톡에 붙여넣기 해주세요:', url);
-        btn.disabled = false;
-      });
+  btn.textContent = '⏳ 이미지 생성 중...';
+  try {
+    const canvas = buildResultCanvas(lastResultData);
+    canvas.toBlob(async blob => {
+      try {
+        const file = new File([blob], '파샨파샨정산결과.png', { type: 'image/png' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: '파샨파샨 정산결과' });
+        } else {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = '파샨파샨정산결과.png';
+          a.click();
+        }
+      } catch(e) {}
+      btn.textContent = '📷 정산결과 이미지 저장/공유';
+      btn.disabled = false;
+    }, 'image/png');
+  } catch(e) {
+    alert('이미지 생성 실패: ' + e.message);
+    btn.textContent = '📷 정산결과 이미지 저장/공유';
+    btn.disabled = false;
   }
+}
+
+function buildResultCanvas(data) {
+  const FF  = "'Malgun Gothic','Apple SD Gothic Neo',sans-serif";
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const OP  = 20;   // outer padding
+  const CX  = 14;   // cell horizontal padding
+  const CY  = 10;   // cell vertical padding
+  const FS  = 13;   // body font size
+  const HFS = 12;   // header font size
+  const TITLE_H = 72;
+
+  // ── 컬럼 너비 측정 ──
+  const mCtx = document.createElement('canvas').getContext('2d');
+  const colW = data.cols.map((col, ci) => {
+    mCtx.font = `bold ${HFS}px ${FF}`;
+    let w = mCtx.measureText(col).width + CX * 2;
+    data.rows.forEach(row => {
+      mCtx.font = `bold ${FS}px ${FF}`;
+      w = Math.max(w, mCtx.measureText(row[ci] || '').width + CX * 2);
+    });
+    return Math.max(Math.ceil(w), 72);
+  });
+
+  const ROW_H  = FS + CY * 2;
+  const tableW = colW.reduce((s, w) => s + w, 0);
+  const hasAcc = data.bank || data.account || data.holder;
+  const ACC_H  = hasAcc ? 56 : 0;
+  const ACC_GAP = hasAcc ? 12 : 0;
+
+  const CW = tableW + OP * 2;
+  const CH = OP + TITLE_H + OP / 2
+           + ROW_H * (1 + data.rows.length)
+           + OP + ACC_H + (hasAcc ? ACC_GAP : 0) + OP;
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = Math.round(CW * DPR);
+  canvas.height = Math.round(CH * DPR);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
+  ctx.textBaseline = 'middle';
+
+  // ── 배경 ──
+  ctx.fillStyle = '#f0f4f8';
+  ctx.fillRect(0, 0, CW, CH);
+
+  // ── 타이틀 배너 ──
+  const grd = ctx.createLinearGradient(0, 0, CW, 0);
+  grd.addColorStop(0, '#2d6a4f');
+  grd.addColorStop(1, '#52b788');
+  ctx.fillStyle = grd;
+  rrect(ctx, OP / 2, OP / 2, CW - OP, TITLE_H, 12);
+  ctx.fill();
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.font = `bold 20px ${FF}`;
+  ctx.fillText('파샨파샨 정산결과', CW / 2, OP / 2 + TITLE_H * 0.38);
+  ctx.font = `13px ${FF}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fillText(data.d ? '정산일: ' + data.d : '', CW / 2, OP / 2 + TITLE_H * 0.72);
+
+  // ── 테이블 위치 ──
+  const TX = OP;
+  const TY = OP + TITLE_H + OP / 2;
+
+  // ── 흰 카드 배경 ──
+  ctx.fillStyle = 'white';
+  rrect(ctx, TX, TY, tableW, ROW_H * (1 + data.rows.length), 8);
+  ctx.fill();
+
+  // ── 헤더 배경 (상단 라운드만) ──
+  ctx.fillStyle = '#e8f5e9';
+  ctx.fillRect(TX, TY, tableW, ROW_H);
+
+  // ── 헤더 셀 ──
+  let cx = TX;
+  data.cols.forEach((col, ci) => {
+    if (ci > 0) {
+      ctx.strokeStyle = '#c8e6c9'; ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(cx, TY); ctx.lineTo(cx, TY + ROW_H); ctx.stroke();
+    }
+    ctx.fillStyle = '#2d6a4f';
+    ctx.font = `bold ${HFS}px ${FF}`;
+    ctx.textAlign = ci === 0 ? 'left' : 'center';
+    ctx.fillText(col, ci === 0 ? cx + CX : cx + colW[ci] / 2, TY + ROW_H / 2);
+    cx += colW[ci];
+  });
+
+  // 헤더 하단 구분선
+  ctx.strokeStyle = '#b7dfc4'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(TX, TY + ROW_H); ctx.lineTo(TX + tableW, TY + ROW_H); ctx.stroke();
+
+  // ── 데이터 행 ──
+  const recvIdx = data.cols.indexOf('받을 금액');
+  const totIdx  = data.cols.indexOf('합계');
+  const lastRI  = data.rows.length - 1;
+
+  data.rows.forEach((row, ri) => {
+    const ry     = TY + ROW_H * (ri + 1);
+    const isLast = ri === lastRI;
+
+    if (isLast) {
+      ctx.fillStyle = '#e8f5e9';
+      ctx.fillRect(TX, ry, tableW, ROW_H);
+    }
+
+    // 행 상단 선
+    ctx.strokeStyle = isLast ? '#b7dfc4' : '#f0f0f0';
+    ctx.lineWidth   = isLast ? 1.5 : 0.5;
+    ctx.beginPath(); ctx.moveTo(TX, ry); ctx.lineTo(TX + tableW, ry); ctx.stroke();
+
+    cx = TX;
+    row.forEach((cell, ci) => {
+      // 열 구분선
+      if (ci > 0) {
+        ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(cx, ry); ctx.lineTo(cx, ry + ROW_H); ctx.stroke();
+      }
+      // 빈 셀 생략
+      if (cell === '' || cell === null || cell === undefined) { cx += colW[ci]; return; }
+
+      const isRecv = ci === recvIdx && !!cell;
+      const bold   = isLast || ci === 0 || ci === totIdx || isRecv;
+      ctx.font      = `${bold ? 'bold ' : ''}${FS}px ${FF}`;
+      ctx.fillStyle = isRecv ? '#2d6a4f' : (bold ? '#222' : '#555');
+      ctx.textAlign = ci === 0 ? 'left' : 'center';
+      ctx.fillText(cell, ci === 0 ? cx + CX : cx + colW[ci] / 2, ry + ROW_H / 2);
+      cx += colW[ci];
+    });
+  });
+
+  // ── 계좌 안내 ──
+  if (hasAcc) {
+    const ay = TY + ROW_H * (1 + data.rows.length) + ACC_GAP;
+    ctx.fillStyle = '#e8f5e9';
+    rrect(ctx, TX, ay, tableW, ACC_H, 8);
+    ctx.fill();
+    ctx.textAlign  = 'left';
+    ctx.fillStyle  = '#40916c';
+    ctx.font       = `bold 12px ${FF}`;
+    ctx.fillText('입금 계좌', TX + CX, ay + ACC_H * 0.33);
+    ctx.fillStyle  = '#2d6a4f';
+    ctx.font       = `bold 15px ${FF}`;
+    ctx.fillText(
+      [data.bank, data.account, data.holder].filter(Boolean).join('  '),
+      TX + CX, ay + ACC_H * 0.70
+    );
+  }
+
+  return canvas;
+}
+
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y,     x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x,     y + h, r);
+  ctx.arcTo(x,     y + h, x,     y,     r);
+  ctx.arcTo(x,     y,     x + w, y,     r);
+  ctx.closePath();
 }
 
 // ─── 공유 결과 뷰 ─────────────────────────────────────
