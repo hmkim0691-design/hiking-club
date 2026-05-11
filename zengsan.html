@@ -330,7 +330,7 @@
 
   <!-- 1. 참가자 -->
   <div class="card">
-    <h2>👥 참가자</h2>
+    <h2>👥 참가자 <span id="memberCount" style="font-size:13px;font-weight:400;color:#888;"></span></h2>
     <div class="row">
       <div class="field">
         <label>이름</label>
@@ -570,13 +570,16 @@ function removeMember(name) {
 
 function renderMembers() {
   const el = document.getElementById('memberList');
+  const countEl = document.getElementById('memberCount');
   if (members.length === 0) {
     el.innerHTML = '<span style="color:#aaa;font-size:13px;">아직 참가자가 없어요</span>';
+    if (countEl) countEl.textContent = '';
     return;
   }
   el.innerHTML = members.map(m =>
     `<div class="tag">👤 ${m} <span onclick="removeMember('${m}')">×</span></div>`
   ).join('');
+  if (countEl) countEl.textContent = `(총 ${members.length}명)`;
 }
 
 // ─── 자동완성 ─────────────────────────────────────────
@@ -1193,7 +1196,7 @@ async function shareResult() {
   btn.disabled = true;
   btn.textContent = '⏳ 이미지 생성 중...';
 
-  // 캡처용 클론: absolute 배치로 뷰포트 높이 제한 없이 전체 높이 캡처
+  // 캡처용 클론: absolute 배치, summary-wrap overflow 해제로 좌우 잘림 방지
   const wrapper = document.createElement('div');
   wrapper.style.cssText =
     'position:absolute;left:-9999px;top:0;' +
@@ -1204,6 +1207,9 @@ async function shareResult() {
   clone.style.cssText = 'display:block;margin:0;box-shadow:none;border-radius:12px;';
   clone.querySelector('#shareBtn')?.remove();
   clone.querySelector('.share-hint')?.remove();
+  // 테이블 가로 스크롤 영역 해제 → 전체 너비가 이미지에 포함되도록
+  const sw = clone.querySelector('.summary-wrap');
+  if (sw) sw.style.cssText = 'overflow:visible;';
 
   wrapper.appendChild(clone);
   document.body.appendChild(wrapper);
@@ -1211,7 +1217,15 @@ async function shareResult() {
   try {
     await new Promise(r => setTimeout(r, 150)); // 렌더 대기
 
-    const fullW = wrapper.scrollWidth;
+    // 테이블이 카드보다 넓을 수 있으므로 실제 너비로 wrapper 재조정
+    const tableEl = wrapper.querySelector('.summary-table');
+    const fullW = tableEl
+      ? Math.max(wrapper.scrollWidth, tableEl.scrollWidth + 40)
+      : wrapper.scrollWidth;
+    wrapper.style.width = fullW + 'px';
+
+    await new Promise(r => setTimeout(r, 50)); // 너비 변경 후 재렌더 대기
+
     const fullH = wrapper.scrollHeight;
 
     const canvas = await html2canvas(wrapper, {
