@@ -1196,50 +1196,41 @@ async function shareResult() {
   btn.disabled = true;
   btn.textContent = '⏳ 이미지 생성 중...';
 
-  // 캡처용 클론: absolute 배치, summary-wrap overflow 해제로 좌우 잘림 방지
-  const wrapper = document.createElement('div');
-  wrapper.style.cssText =
-    'position:absolute;left:-9999px;top:0;' +
-    `width:${Math.min(resultCard.offsetWidth, 700)}px;` +
-    'background:#ffffff;font-family:\'Malgun Gothic\',sans-serif;';
-
-  const clone = resultCard.cloneNode(true);
-  clone.style.cssText = 'display:block;margin:0;box-shadow:none;border-radius:12px;';
-  clone.querySelector('#shareBtn')?.remove();
-  clone.querySelector('.share-hint')?.remove();
-  // 테이블 가로 스크롤 영역 해제 → 전체 너비가 이미지에 포함되도록
-  const sw = clone.querySelector('.summary-wrap');
-  if (sw) sw.style.cssText = 'overflow:visible;';
-
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-
   try {
-    await new Promise(r => setTimeout(r, 150)); // 렌더 대기
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 100));
 
-    // 테이블이 카드보다 넓을 수 있으므로 실제 너비로 wrapper 재조정
-    const tableEl = wrapper.querySelector('.summary-table');
-    const fullW = tableEl
-      ? Math.max(wrapper.scrollWidth, tableEl.scrollWidth + 40)
-      : wrapper.scrollWidth;
-    wrapper.style.width = fullW + 'px';
-
-    await new Promise(r => setTimeout(r, 50)); // 너비 변경 후 재렌더 대기
-
-    const fullH = wrapper.scrollHeight;
-
-    const canvas = await html2canvas(wrapper, {
+    const canvas = await html2canvas(resultCard, {
       backgroundColor: '#ffffff',
       scale: 2,
       useCORS: true,
       logging: false,
-      width: fullW,
-      height: fullH,
-      windowWidth: fullW,
-      windowHeight: fullH
-    });
+      scrollX: -window.pageXOffset,
+      scrollY: -window.pageYOffset,
+      onclone: (clonedDoc, clonedEl) => {
+        // 공유 버튼·힌트 제거
+        clonedEl.querySelector('#shareBtn')?.remove();
+        clonedEl.querySelector('.share-hint')?.remove();
 
-    document.body.removeChild(wrapper);
+        // 테이블: overflow 해제 + 셀 폰트·패딩 축소로 좌우 잘림·겹침 동시 해결
+        const style = clonedDoc.createElement('style');
+        style.textContent = `
+          .summary-wrap { overflow: visible !important; }
+          .summary-table {
+            font-size: 11px !important;
+            white-space: normal !important;
+            width: auto !important;
+          }
+          .summary-table th,
+          .summary-table td {
+            padding: 5px 7px !important;
+            word-break: keep-all !important;
+            white-space: nowrap !important;
+          }
+        `;
+        clonedDoc.head.appendChild(style);
+      }
+    });
 
     canvas.toBlob(async (blob) => {
       const file = new File([blob], '파샨파샨_정산결과.png', { type: 'image/png' });
@@ -1264,7 +1255,6 @@ async function shareResult() {
     }, 'image/png');
 
   } catch (e) {
-    document.body.contains(wrapper) && document.body.removeChild(wrapper);
     alert('이미지 생성 실패: ' + e.message);
   } finally {
     btn.disabled = false;
